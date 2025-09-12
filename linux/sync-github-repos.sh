@@ -6,7 +6,6 @@ REPO_LIST=(
     "$HOME/project/scripts" # scripts
     "$HOME/project/environ" # environ
 )
-alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 while true
 do
@@ -22,6 +21,5 @@ do
     git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" commit -m "auto: sync $(date "+%Y.%m.%d %H:%M")"
     git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" push
 
-    echo "[INFO] Waiting for $TIMEOUT"
     sleep "$TIMEOUT"
 done
