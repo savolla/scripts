@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+function run_dmenu() {
+    dmenu -l 10 \
+        -b \
+        -fn "IosevkaTerm NF:size=14:style=Regular" \
+        -nb "#222222" \
+        -nf "#bbbbbb" \
+        -sb "#005577" \
+        -sf "#eeeeee"
+}
+
+# Get the list of suspended processes (those with status 'T')
+SUSPENDED_PROCESSES=$(ps aux | grep ' T ' | awk '{print $1, $11, $2}' | sed 's/\/.*\///' | uniq)
+
+# Ask user to select which process to resume
+PROCESS=$(echo "$SUSPENDED_PROCESSES" | run_dmenu)
+
+# Check if the user selected a process
+if [[ -n "$PROCESS" ]]; then
+    # Extract PID from the selected process string
+    PID=$(echo "$PROCESS" | awk '{print $3}')
+
+    # Send SIGCONT to resume the process
+    kill -SIGCONT $PID
+    notify-send "Process $PROCESS resumed."
+else
+    notify-send "No process selected."
+fi

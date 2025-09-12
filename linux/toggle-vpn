@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Path to the file that stores VPN state
+STATE_FILE="/tmp/.vpn_state"
+
+# Check if the state file exists, if not create it and initialize it with '0' (VPN off)
+if [[ ! -f "$STATE_FILE" ]]; then
+    echo "0" > "$STATE_FILE"  # 0 means VPN is off
+fi
+
+# Read the current state from the file
+IS_VPN_ON=$(cat "$STATE_FILE")
+
+if [[ $IS_VPN_ON -eq 0 ]]; then
+    # Connect to the VPN
+    pkill -f screenkey
+    pkexec protonvpn c -f  # Connect to the fastest server
+    screenkey
+    echo "1" > "$STATE_FILE"  # Update state to '1' (VPN is on)
+    notify-send -r 27072 "toggle vpn:" "VPN connected."
+else
+    # Disconnect the VPN
+    pkill -f screenkey
+    pkexec protonvpn d  # Disconnect
+    screenkey
+    echo "0" > "$STATE_FILE"  # Update state to '0' (VPN is off)
+    notify-send -r 27072 "toggle vpn:" "VPN disconnected."
+fi

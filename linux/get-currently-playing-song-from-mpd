@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+MAX_CHAR_COUNT=35
+
+if [[ $(mpc status | grep "^\[playing\]" | awk '{ print $1 }') ]]
+then
+    SONG="  : $(mpc --format '%artist% - %title%' current)"
+    if [ ${#SONG} -gt $MAX_CHAR_COUNT ]; then
+        SONG="$SONG…"
+    fi
+    SONG="$SONG │"
+    printf '%s' "${SONG}"
+else
+    printf ' '
+fi

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+st -e /home/savolla/project/scripts/linux/attach-all-tmux-sessions &
+librewolf &
+logseq &

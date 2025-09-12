@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+function run_dmenu() {
+    dmenu -n \
+        -l 10 \
+        -b \
+        -fn "IosevkaTerm NF:size=14:style=Regular" \
+        -nb "#222222" \
+        -nf "#bbbbbb" \
+        -sb "#005577" \
+        -sf "#eeeeee"
+}
+AVAILABLE_ANDROID_BOXES=(
+    "Xiaomi Redmi Note 7"
+    "Xiaomi Redmi Note 8"
+)
+
+# use dmenu to display each array element on a new line
+SELECTED_BOX=$(printf "%s\n" "${AVAILABLE_ANDROID_BOXES[@]}" | run_dmenu )
+
+# launch the selected box
+player --vm-name "$SELECTED_BOX" --no-update-check

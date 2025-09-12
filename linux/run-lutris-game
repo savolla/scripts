@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+function run_dmenu() {
+    dmenu -n \
+        -l -1 \
+        -b \
+        -fn "IosevkaTerm NF:size=14:style=Regular" \
+        -nb "#222222" \
+        -nf "#bbbbbb" \
+        -sb "#005577" \
+        -sf "#eeeeee"
+}
+
+GAME=$(list-installed-lutris-games | run_dmenu)
+COVERART_DIR="$HOME/.local/share/lutris/coverart"
+COVERART="$COVERART_DIR/$GAME.jpg"
+notify-send -r 27072 "Launching:" "$GAME" -i "$COVERART"
+lutris lutris:rungame/$GAME

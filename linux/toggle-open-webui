@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# # Function to check if a service or process is running
+is_process_running() {
+  ps aux | grep -v grep | grep -q $1
+}
+
+is_docker_container_running() {
+  docker ps | grep $1
+}
+
+if is_docker_container_running open-webui && is_process_running ollama
+then
+  pkill -f "ollama"
+  docker container stop "$(docker ps | grep open-webui | awk '{ print $1 }')"
+else
+  ollama serve &
+  cd "$HOME"/resource/tools/docker/open-webui || exit
+  ./start &
+  sleep 10
+  librewolf http://localhost:8080 # open-webui url
+fi

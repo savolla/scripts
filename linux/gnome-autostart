@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# system setup
+sleep 3 && setxkbmap tr &
+sleep 3 && setxkbmap -option caps:swapescape &
+unclutter -idle 2 &
+xset r rate 150 50
+xset s off
+xset -dpms
+mpd &
+sxhkd -m 1 &
+wpctl set-volume @DEFAULT_AUDIO_SINK@ 30%
+tmux-session-creator &
+sync-dotfiles-with-xkarna-usb &
+periodic-random-wallpaper-switcher &
+update-repos &
+opensnitchd &
+opensnitch-ui --background &
+udiskie &
+adaptive-blue-light-filter &
+
+# auto start gui apps
+sleep 2 && kitty -e attach-all-tmux-sessions &
+sleep 4 && librewolf &
+sleep 6 && logseq &
+sleep 8 && ferdium &

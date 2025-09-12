@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# Check if a file or directory was passed
+if [ -z "$1" ]; then
+  echo "Usage: $0 <file_or_directory_path>"
+  exit 1
+fi
+
+TARGET="$1"
+
+# If it's a directory
+if [ -d "$TARGET" ]; then
+  echo "Securely deleting directory: $TARGET"
+  find "$TARGET" -type f -exec shred -uzv {} \;
+  rm -r "$TARGET"
+
+# If it's a file
+elif [ -f "$TARGET" ]; then
+  echo "Securely deleting file: $TARGET"
+  shred -uzv "$TARGET"
+
+else
+  echo "Error: '$TARGET' is not a valid file or directory"
+  exit 1
+fi

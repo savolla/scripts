@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+SCRIPTS_DIR="$HOME/project/scripts/linux"
+
+function run_dmenu() {
+    dmenu -n \
+        -b \
+        -l 10 \
+        -fn "IosevkaTerm NF:size=14:style=Regular" \
+        -nb "#222222" \
+        -nf "#bbbbbb" \
+        -sb "#005577" \
+        -sf "#eeeeee"
+}
+
+eval "$(ls "$SCRIPTS_DIR" | run_dmenu)"

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Define the app image path
+APPIMAGE_PATH="$APPIMAGE_DIR/Mechvibes-2.3.6-hotfix.AppImage"
+
+# Find the PID of the running AppImage
+PID=$(pgrep -f "$APPIMAGE_PATH")
+
+if [ -z "$PID" ]; then
+  # If no process is running, launch the AppImage
+  appimage-run "$APPIMAGE_PATH" --no-sandbox &
+  echo "AppImage started."
+else
+  # If the AppImage is running, kill the process
+  kill "$PID"
+  echo "AppImage stopped."
+fi

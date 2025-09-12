@@ -1,0 +1,79 @@
+#!/bin/bash
+
+set -e
+
+USERNAME=savolla
+UUID="5ba30f2e-b06a-4588-b594-70fb46ef16d9"
+
+# Detect distro
+DISTRO_ID=$(grep '^ID=' /etc/os-release | cut -d= -f2 | tr -d '"')
+
+echo "[INFO] Detected distro: $DISTRO_ID"
+
+# Create the user if not already there
+if ! id "$USERNAME" &>/dev/null; then
+  echo "[INFO] Creating user: $USERNAME"
+  sudo useradd -M -s /bin/bash "$USERNAME"
+
+  # Get password from user and validate
+  read -sp "New password for $USERNAME: " PASSWORD
+  echo
+  read -sp "Password again: " PASSWORD_CONFIRM
+  echo
+
+  if [[ "$PASSWORD" != "$PASSWORD_CONFIRM" ]]; then
+    echo "[ERROR] Passwords don't match. Exiting..."
+    exit 1
+  fi
+
+  echo "$USERNAME:$PASSWORD" | sudo chpasswd
+
+  # add user to sudoers group
+  sudo usermod -aG wheel $USERNAME
+
+else
+  echo "[INFO] User $USERNAME already exists"
+fi
+
+# Add to crypttab if missing
+if ! sudo grep -q "^$USERNAME" /etc/crypttab 2>/dev/null; then
+  echo "[INFO] Adding to /etc/crypttab"
+  echo "$USERNAME UUID=$UUID none luks" | sudo tee -a /etc/crypttab
+else
+  echo "[INFO] /etc/crypttab already contains entry for $USERNAME"
+fi
+
+# Add to fstab if missing
+if ! grep -q "/home/$USERNAME" /etc/fstab 2>/dev/null; then
+  echo "[INFO] Adding to /etc/fstab"
+  echo "/dev/mapper/$USERNAME /home/$USERNAME ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
+else
+  echo "[INFO] /etc/fstab already contains entry for /home/$USERNAME"
+fi
+
+# Run initramfs regeneration based on distro
+echo "[INFO] Updating initramfs..."
+
+case "$DISTRO_ID" in
+fedora | rhel | centos)
+  echo "[INFO] Running dracut for Fedora/RHEL"
+  sudo dracut -f
+  ;;
+ubuntu | debian)
+  echo "[INFO] Running update-initramfs for Ubuntu/Debian"
+  sudo update-initramfs -u
+  ;;
+arch)
+  echo "[INFO] Running mkinitcpio for Arch Linux"
+  sudo mkinitcpio -P
+  ;;
+*)
+  echo "[WARNING] Unknown distro: $DISTRO_ID — please update initramfs manually."
+  ;;
+esac
+
+echo
+echo "[✅ DONE] Setup complete."
+echo "- On next boot, the system will ask for LUKS password if the drive is plugged in."
+echo "- /home/$USERNAME will mount from the encrypted device."
+echo "- Other users remain unaffected."

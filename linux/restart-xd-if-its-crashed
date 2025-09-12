@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+function is-xd-running() {
+  echo "$(XD-CLI list | grep "progress::" | grep -v "1.00" | grep -v "0.00" | wc -l)"
+}
+
+while true; do
+  if [[ $(is-xd-running) -eq 0 ]]; then
+    echo "xd is not running"
+    nixos-container restart i2pd-container
+  fi
+  sleep 45s
+done

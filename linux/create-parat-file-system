@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+cd ~/
+mkdir -p project
+cd project
+mkdir -p audio boilerplates devel dotfiles environ scripts suckless
+cd audio

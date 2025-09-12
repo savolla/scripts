@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+notify-send -r 27072 "Session:" "hibernating the system"
+
+# just in case if forgot you were recording your screen
+# preventing corrupted screencast file
+pkill -f ffmpeg
+
+systemctl hibernate

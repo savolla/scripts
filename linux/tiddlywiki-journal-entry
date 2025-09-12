@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# Step 1: Press "Ctrl + ."
+xdotool key ctrl+period
+sleep 0.2
+
+# Step 2: Press "Shift + o"
+xdotool key shift+o
+sleep 0.2
+
+# Step 3: Press Escape
+xdotool key Escape
+sleep 0.2
+
+# Step 4: Press "Shift + o" again
+xdotool key shift+o
+sleep 0.2
+
+# Step 5: Paste the current time (HH:MM)
+CURRENT_TIME=$(date +"%H:%M")
+xdotool type "**$CURRENT_TIME**"
+sleep 0.2
+
+# Step 6: Press space
+xdotool key space

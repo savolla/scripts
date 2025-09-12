@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+
+# Function to determine the init system
+get_init_system() {
+    # Check for systemd
+    if systemctl --version >/dev/null 2>&1; then
+        echo "systemd"
+    # Check for SysVinit (init)
+    elif [ -e /sbin/init ] && [ "$(readlink /sbin/init)" == "/lib/sysvinit/init" ]; then
+        echo "sysvinit"
+    # Check for Upstart
+    elif initctl --version >/dev/null 2>&1; then
+        echo "upstart"
+    # Check for OpenRC
+    elif [ -x /etc/init.d/net.lo ]; then
+        echo "openrc"
+    # Check for runit
+    elif [ -e /etc/runit ]; then
+        echo "runit"
+    else
+        echo "unknown"
+    fi
+}
+
+# Function to reboot the system
+reboot_system() {
+    case "$1" in
+        "systemd")
+            systemctl reboot
+            ;;
+        "sysvinit")
+            /sbin/reboot
+            ;;
+        "upstart")
+            initctl reboot
+            ;;
+        "openrc")
+            /sbin/reboot
+            ;;
+        "runit")
+            exec /sbin/reboot
+            ;;
+        *)
+            echo "Reboot not supported for this init system"
+            ;;
+    esac
+}
+
+# Function to power off the system
+poweroff_system() {
+    case "$1" in
+        "systemd")
+            systemctl poweroff
+            ;;
+        "sysvinit")
+            /sbin/poweroff
+            ;;
+        "upstart")
+            initctl poweroff
+            ;;
+        "openrc")
+            /sbin/poweroff
+            ;;
+        "runit")
+            exec /sbin/poweroff
+            ;;
+        *)
+            echo "Poweroff not supported for this init system"
+            ;;
+    esac
+}
+
+# Function to hibernate the system
+hibernate_system() {
+    case "$1" in
+        "systemd")
+            systemctl hibernate
+            ;;
+        "sysvinit")
+            # SysVinit may not have native hibernation support
+            echo "Hibernation not supported for sysvinit"
+            ;;
+        "upstart")
+            # Upstart also doesn't have native hibernation support
+            echo "Hibernation not supported for upstart"
+            ;;
+        "openrc")
+            # OpenRC doesn't have native hibernation support
+            echo "Hibernation not supported for openrc"
+            ;;
+        "runit")
+            # Runit doesn't have native hibernation support
+            echo "Hibernation not supported for runit"
+            ;;
+        *)
+            echo "Hibernation not supported for this init system"
+            ;;
+    esac
+}
+
+# Main logic: Detect the init system and act accordingly
+init_system=$(get_init_system)
+
+echo "Detected init system: $init_system"
+
+# Example commands based on detected init system
+action=$1  # Pass "reboot", "poweroff", or "hibernate" as the argument
+
+if [ "$action" == "reboot" ]; then
+    reboot_system "$init_system"
+elif [ "$action" == "poweroff" ]; then
+    poweroff_system "$init_system"
+elif [ "$action" == "hibernate" ]; then
+    hibernate_system "$init_system"
+else
+    echo "Invalid action. Use 'reboot', 'poweroff', or 'hibernate'."
+fi

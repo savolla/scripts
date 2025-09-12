@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+notify-send -r 27072 -i $ICONS_DIR/loading.svg "launching:" "mpv with youtube video"
+xdotool click 3
+xdotool key Down
+xdotool key Down
+xdotool key Down
+xdotool key Down
+xdotool key Down
+xdotool key Down
+xdotool key Down
+xdotool key Enter
+mpv "$(xclip -o)"

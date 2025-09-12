@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+pkill -f ffmpeg
+notify-send "󰿎  Screen Recording Stopped"
+echo "RECORDING_SCREEN_BY_USER=0" > /tmp/is-screen-recording
+toggle-screenkey
+pkill -f Mechvibes-2.3.6-hotfix.AppImage

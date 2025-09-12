@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+function run_dmenu() {
+    dmenu -l 10 \
+        -b \
+        -fn "IosevkaTerm NF:size=14:style=Regular" \
+        -nb "#222222" \
+        -nf "#bbbbbb" \
+        -sb "#005577" \
+        -sf "#eeeeee"
+}
+
+pkill -f "$(ps -e -o comm | sort  | uniq | run_dmenu )"

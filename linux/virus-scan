@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+CLAMAV_VIRUS_SCAN_LOGS_DIR="$HOME/temporary/log/clamav"
+CLAMAV_LOG_FILE="$CLAMAV_VIRUS_SCAN_LOGS_DIR/clamav-scan-results-$(date +'%Y-%m-%d_%H:%M:%S').log"
+
+notify-send -r 27072 "System Virus Scan" "Refreshing ClamAV virus database"
+pkill -f screenkey
+pkexec freshclam # downoload and refresh virus database
+screenkey
+notify-send -r 27072 "System Virus Scan" "Creating scan results file"
+touch "$CLAMAV_LOG_FILE"
+notify-send -r 27072 "System Virus Scan" "Scan started!"
+clamscan --infected -r / > "$CLAMAV_LOG_FILE" # scan all system and print only infected files into logs
+
+# check if there are infected files appeared in logs
+if [ ! -s "$CLAMAV_LOG_FILE" ]; then
+    notify-send -r 27072 "System Virus Scan" "Finished. No threads found!"
+else
+    notify-send -r 27072 -u critical "System Virus Scan" "Viruses found!! Check logs!"
+fi

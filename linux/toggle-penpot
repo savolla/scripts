@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+is_docker_container_running() {
+  docker ps | grep $1
+}
+
+if is_docker_container_running penpot
+then
+  cd "$HOME"/resource/tools/docker/penpot || exit
+  ./stop
+else
+  cd "$HOME"/resource/tools/docker/penpot || exit
+  ./start
+  sleep 5
+  librewolf http://localhost:9001
+fi

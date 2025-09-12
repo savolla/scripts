@@ -1,0 +1,184 @@
+#!/usr/bin/env bash
+
+BACKUP_DISK_LABEL="xkarna"
+BACKUP_DISK_MOUNT_PATH="/run/media/$USER/$BACKUP_DISK_LABEL"
+
+directories=(
+    "$BACKUP_DISK_MOUNT_PATH/savolla"
+    # archive
+    "$BACKUP_DISK_MOUNT_PATH/savolla/archive"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/archive/etc"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/archive/toolchains"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/archive/downloads"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/archive/downloads/browser"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/archive/downloads/nicotine"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/archive/downloads/nicotine/finished"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/archive/downloads/nicotine/incomplete"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/archive/downloads/nicotine/received"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/archive/downloads/qbittorrent"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/archive/downloads/transmission"
+
+    # area
+    "$BACKUP_DISK_MOUNT_PATH/savolla/area"
+
+    # resource
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/books"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/books/datasheets"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/books/embedded-linux"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/books/web-development"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/docker"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/games"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/images"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/images/screenshots"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/images/wallpapers"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/images/gifs"
+    # "$BACKUP_DISK_MOUNT_PATH/savolla/resource/iso"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/music"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/notes"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/repos"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/secrets"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/tools"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/tools/appimages"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/tools/bin"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/tools/deb"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/tools/rpm"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/videos"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/videos/courses"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/videos/screencasts"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/vms"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/vms/qemu"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/vms/virtualbox"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/resource/vms/vmware"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/images/icons"
+
+    # temporary
+    "$BACKUP_DISK_MOUNT_PATH/savolla/temporary"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/temporary/mnt"
+    "$BACKUP_DISK_MOUNT_PATH/savolla/temporary/test"
+)
+
+function create_directory_structure() {
+    for dir in "${directories[@]}"; do
+        if [ ! -d "$dir" ]; then
+            mkdir -p "$dir"
+        fi
+    done
+}
+
+function backup_changes_from_host_to_backup_disk() {
+
+
+    # PARAT dirs
+    rsync -av --delete --exclude="*/node_modules/*" --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/project" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/resource/books/datasheets" "$BACKUP_DISK_MOUNT_PATH/savolla/resource/books/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/resource/books/embedded-linux" "$BACKUP_DISK_MOUNT_PATH/savolla/resource/books/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/resource/books/web-development" "$BACKUP_DISK_MOUNT_PATH/savolla/resource/books/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/resource/gifs" "$BACKUP_DISK_MOUNT_PATH/savolla/resource/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/resource/images" "$BACKUP_DISK_MOUNT_PATH/savolla/resource/"
+    # rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/resource/iso" "$BACKUP_DISK_MOUNT_PATH/savolla/resource/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/resource/notes" "$BACKUP_DISK_MOUNT_PATH/savolla/resource/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/resource/repos/fast-syntax-highlighting" "$BACKUP_DISK_MOUNT_PATH/savolla/resource/repos/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/resource/repos/zsh-autosuggestions" "$BACKUP_DISK_MOUNT_PATH/savolla/resource/repos/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/resource/secrets" "$BACKUP_DISK_MOUNT_PATH/savolla/resource/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/resource/tools" "$BACKUP_DISK_MOUNT_PATH/savolla/resource/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/resource/images/icons" "$BACKUP_DISK_MOUNT_PATH/savolla/resource/images/"
+
+    # dotfiles in home
+    # rsync -av "$HOME/.librewolf" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    # rsync -av "$HOME/.mozilla" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/.logseq" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/.ssh" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/.ssr" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/.vscode-oss" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/.bashrc" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/.zshrc" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/.gitconfig" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/.ideavimrc" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/.nvidia-settings-rc" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/.profile" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/.xinitrc" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/.xprofile" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*" "$HOME/.Xresources" "$BACKUP_DISK_MOUNT_PATH/savolla/"
+
+    # dotfiles in .config
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/doom" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/Ryujinx" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/antimicrox" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/bleachbit" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/btop" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/Genymobile" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/inkscape" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/lxsession-default-apps" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/dunst" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  --exclude ".local" "$HOME/.config/emacs" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/enchant" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/encore" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/flameshot" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/FreeTube" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  --exclude "Partitions" --exclude "Local Storage" --exclude "Cache" --exclude "DawnGraphiteCache" --exclude "DawnWebGPUCache" --exclude "GPUCache" "$HOME/.config/Ferdium" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/figma-linux" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/gajim" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/gcolor3" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/GIMP" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/gtk-3.0" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/gtk-4.0" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/htop" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/hypr" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/JetBrains" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/keepassxc" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/kitty" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/libfm" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/libvirt" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/Logseq" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/mimeapps.list" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  --exclude "log" --exclude "pid" --exclude "state" "$HOME/.config/mpd" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/mpv" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/ncmpcpp" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/neofetch" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/newsboat" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/nicotine" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/opensnitch" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/nsxiv" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/nvim" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/pavucontrol.ini" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/pcmanfm" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/picom.conf" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/protonup" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/pulse" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/qBittorrent" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/QtProject.conf" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  --exclude "history" "$HOME/.config/ranger" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/REAPER" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/retroarch" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/rofi" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/screenkey.json" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/starship.toml" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/sxhkd" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/sxiv" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/tenacity" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/tmux" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/transmission" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/VirtualBox" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/virt-viewer" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/VSCodium" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/waybar" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/weechat" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/xournalpp" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+    rsync -av --delete --exclude="*/[cC]ache/*" --exclude="*/[lL]og/*"  "$HOME/.config/zathura" "$BACKUP_DISK_MOUNT_PATH/savolla/.config/"
+}
+
+while true
+do
+    if [[ -d "$BACKUP_DISK_MOUNT_PATH" ]]; then
+        sleep 5s
+        create_directory_structure
+        notify-send "backup:" "uploading changes to $BACKUP_DISK_LABEL"
+        backup_changes_from_host_to_backup_disk
+        sleep 5s
+        notify-send -r 27072 -t 0 "backup:" "finished. unmounting and powering off $BACKUP_DISK_LABEL"
+        umount "$BACKUP_DISK_MOUNT_PATH"
+    fi
+
+    sleep 5s
+done
