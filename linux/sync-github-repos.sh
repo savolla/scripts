@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -x
+
 TIMEOUT=30m
 REPO_LIST=(
     "$HOME/project/publishing/savolla.github.io" # blog
@@ -17,7 +19,7 @@ do
     done
 
     # pushing dotfiles
-    git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" add -A
+    git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" add .
     git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" commit -m "auto: sync $(date "+%Y.%m.%d %H:%M")"
     git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" push
 
