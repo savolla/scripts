@@ -19,7 +19,7 @@ do
     done
 
     # pushing dotfiles
-    git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" add -a
+    git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" add -A
     git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" commit -m "auto: sync $(date "+%Y.%m.%d %H:%M")"
     git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" push
 
