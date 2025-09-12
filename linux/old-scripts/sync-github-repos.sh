@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -xeo
 TIMEOUT=30m
 REPO_LIST=(
     "$HOME/project/publishing/savolla.github.io" # blog
