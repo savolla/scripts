@@ -13,7 +13,7 @@ do
     for repo in "${REPO_LIST[@]}"; do
         cd "$repo" || exit
         git add .
-        git commit -m "auto: sync"
+        git commit -m "auto: sync $(date "+%Y.%m.%d %H:%M")"
         git push
     done
 
