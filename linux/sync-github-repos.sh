@@ -22,16 +22,16 @@ while true; do
         fi
     done
 
-    # Dotfiles repo
-    if [ -n "$(
-        git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" status --porcelain
-    )" ]; then
-        git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" add -A
-        git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" commit -m "auto: sync $(date "+%Y.%m.%d %H:%M")"
-        git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" push || echo "Dotfiles push failed"
-    else
-        echo "No changes in dotfiles"
-    fi
+    # # Dotfiles repo
+    # if [ -n "$(
+    #     git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" status --porcelain
+    # )" ]; then
+    #     git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" add -A
+    #     git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" commit -m "auto: sync $(date "+%Y.%m.%d %H:%M")"
+    #     git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" push || echo "Dotfiles push failed"
+    # else
+    #     echo "No changes in dotfiles"
+    # fi
 
     sleep "$TIMEOUT"
 done
