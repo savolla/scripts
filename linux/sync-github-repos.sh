@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -x
-TIMEOUT=30m
+TIMEOUT=1h
 REPO_LIST=(
     "$HOME/project/publishing/savolla.github.io"
     "$HOME/project/scripts"
@@ -20,6 +20,11 @@ while true; do
             echo "No changes in $repo"
         fi
     done
+
+    # sync dotfiles
+    git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" add -u
+    git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" commit -m "auto: sync $(date "+%Y.%m.%d %H:%M")"
+    git --git-dir="$HOME"/.dotfiles/ --work-tree="$HOME" push
 
     sleep "$TIMEOUT"
 done
